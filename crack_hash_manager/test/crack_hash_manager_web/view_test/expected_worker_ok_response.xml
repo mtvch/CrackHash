@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CrackHashManagerResponse xmlns="http://ccfit.nsu.ru/schema/crack-hash-response"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <RequestId>ec8a4d9a-bfc4-11ed-b9a2-acde48001122</RequestId>
+    <Status>ok</Status>
+</CrackHashManagerResponse>

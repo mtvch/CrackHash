@@ -21,7 +21,7 @@ defmodule CrackHashManager.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :elixir_xml_to_map],
       mod: {CrackHashManager.Application, []}
     ]
   end
@@ -35,14 +35,20 @@ defmodule CrackHashManager.MixProject do
       {:credo, "~> 1.6", only: :dev, runtime: false},
       # Static code types analysis
       {:dialyxir, "~> 1.2", only: :dev, runtime: false},
+      # Parsing xml
+      {:elixir_xml_to_map, "~> 2.0"},
       # Docs build
       {:ex_doc, "~> 0.29.2", only: :dev, runtime: false},
       # Test coverage
       {:excoveralls, "~> 0.16", only: :test},
       # Docs coverage
       {:inch_ex, "~> 2.0", only: [:dev, :test]},
+      # Mocking in tests
+      {:mock, "~> 0.3.0", only: :test},
       # Json encode/decode
-      {:poison, "~> 5.0"}
+      {:poison, "~> 5.0"},
+      # UUID generation
+      {:uuid, "~> 1.1"}
     ]
   end
 end
