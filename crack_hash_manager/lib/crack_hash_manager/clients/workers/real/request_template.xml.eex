@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CrackHashManagerRequest xmlns="http://ccfit.nsu.ru/schema/crack-hash-request" xsi:schemaLocation="http://ccfit.nsu.ru/schema/crack-hash-request schema.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <RequestId><%=@request_id%></RequestId>
+    <PartNumber><%=@part_number%></PartNumber>
+    <PartCount><%=@part_count%></PartCount>
+    <Hash><%=@hash%></Hash>
+    <MaxLength><%=@max_length%></MaxLength>
+    <Alphabet>
+        <symbols><%=@alphabet%></symbols>
+    </Alphabet>
+</CrackHashManagerRequest>

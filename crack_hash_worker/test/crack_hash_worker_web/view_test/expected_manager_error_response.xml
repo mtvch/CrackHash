@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CrackHashWorkerResponse xmlns="http://ccfit.nsu.ru/schema/crack-hash-response"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Status>error</Status>
+    <Error>Bad params</Error>
+</CrackHashWorkerResponse>

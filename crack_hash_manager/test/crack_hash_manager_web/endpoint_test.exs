@@ -29,7 +29,7 @@ defmodule CrackHashManagerWeb.EndpointTest do
 
     conn =
       :get
-      |> conn("/api/hash/status?request_id=#{@request_id}")
+      |> conn("/api/hash/status?requestId=#{@request_id}")
       |> Endpoint.call(@opts)
 
     assert conn.status == 202
@@ -51,11 +51,13 @@ defmodule CrackHashManagerWeb.EndpointTest do
 
     conn =
       :get
-      |> conn("/api/hash/status?request_id=#{@request_id}")
+      |> conn("/api/hash/status?requestId=#{@request_id}")
       |> Endpoint.call(@opts)
 
     assert conn.status == 200
-    assert conn.resp_body == "{\"status\":\"READY\",\"ok\":true,\"data\":[\"WORD_2\",\"WORD_3\",\"WORD_1\"]}"
+
+    assert conn.resp_body ==
+             "{\"status\":\"READY\",\"ok\":true,\"data\":[\"WORD_2\",\"WORD_3\",\"WORD_1\"]}"
   end
 
   test "Отправка заявки на взлом хэша: не указали content-type" do
@@ -71,11 +73,20 @@ defmodule CrackHashManagerWeb.EndpointTest do
   test "Отправка заявки на получение результатов по несуществующей заявке" do
     conn =
       :get
-      |> conn("/api/hash/status?request_id=bad")
+      |> conn("/api/hash/status?requestId=bad")
       |> Endpoint.call(@opts)
 
     assert conn.status == 400
     assert conn.resp_body == "{\"ok\":false,\"error\":\"Not found\"}"
+  end
+
+  test "Отправка результатов воркером по несуществующей заявке" do
+    conn =
+      :patch
+      |> conn("/internal/api/manager/hash/crack/request", @worker_response_2)
+      |> Endpoint.call(@opts)
+
+    assert conn.status == 400
   end
 
   test "Маршрут не найден" do

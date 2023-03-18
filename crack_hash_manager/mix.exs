@@ -5,10 +5,13 @@ defmodule CrackHashManager.MixProject do
     [
       app: :crack_hash_manager,
       version: "0.1.0",
-      elixir: "~> 1.14.3",
+      elixir: ">= 1.14.2",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
+      releases: [
+        main: [include_executables_for: [:unix]]
+      ],
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.detail": :test,
@@ -30,7 +33,7 @@ defmodule CrackHashManager.MixProject do
   defp deps do
     [
       # Web server
-      {:bandit, ">= 0.6.9"},
+      {:bandit, ">= 0.7.1"},
       # Static code consistency analysis
       {:credo, "~> 1.6", only: :dev, runtime: false},
       # Static code types analysis
@@ -43,6 +46,8 @@ defmodule CrackHashManager.MixProject do
       {:excoveralls, "~> 0.16", only: :test},
       # Docs coverage
       {:inch_ex, "~> 2.0", only: [:dev, :test]},
+      # HTTP Client
+      {:finch, "~> 0.15"},
       # Mocking in tests
       {:mock, "~> 0.3.0", only: :test},
       # Json encode/decode

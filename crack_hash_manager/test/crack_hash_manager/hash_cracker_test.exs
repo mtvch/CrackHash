@@ -29,7 +29,7 @@ defmodule CrackHashManager.HashCrackerTest do
         WorkersClient.send(%DTO{
           request_id: request_id,
           part_number: 1,
-          part_count: 23_994,
+          part_count: 2,
           hash: "123",
           max_length: 3,
           alphabet: "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -41,7 +41,7 @@ defmodule CrackHashManager.HashCrackerTest do
         WorkersClient.send(%DTO{
           request_id: request_id,
           part_number: 2,
-          part_count: 23_994,
+          part_count: 2,
           hash: "123",
           max_length: 3,
           alphabet: "abcdefghijklmnopqrstuvwxyz0123456789"

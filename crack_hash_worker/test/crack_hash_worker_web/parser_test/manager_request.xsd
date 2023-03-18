@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://ccfit.nsu.ru/schema/crack-hash-request">
+    <xs:element name="CrackHashManagerRequest">
+        <xs:annotation>
+            <xs:documentation>Запрос на взлом хэша в заданном пространстве строк</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="RequestId" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>GUID запроса</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="PartNumber" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>Номер части запроса</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="PartCount" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>Общее количество частей</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="Hash" type="xs:string">
+                    <xs:annotation>
+                        <xs:documentation>Хэш</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="MaxLength" type="xs:int">
+                    <xs:annotation>
+                        <xs:documentation>Максимальная длина последовательности</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="Alphabet">
+                    <xs:annotation>
+                        <xs:documentation>Алфавит для генерации строк</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="symbols" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

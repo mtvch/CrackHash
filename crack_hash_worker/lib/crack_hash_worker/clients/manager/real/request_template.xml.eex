@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CrackHashWorkerResponse xmlns="http://ccfit.nsu.ru/schema/crack-hash-response" xsi:schemaLocation="http://ccfit.nsu.ru/schema/crack-hash-response schema.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <RequestId><%=@request_id%></RequestId>
+    <PartNumber><%=@part_number%></PartNumber>
+    <Answers><%=for answer <- @answers do%>
+        <words><%=answer%></words><%end%>
+    </Answers>
+</CrackHashWorkerResponse>

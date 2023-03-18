@@ -65,14 +65,16 @@ defmodule CrackHashManagerWeb.Endpoint do
   patch "/internal/api/manager/hash/crack/request" do
     {:ok, xml_body, conn} = Plug.Conn.read_body(conn)
 
-    case Parser.parse_worker_response(xml_body) do
-      %{} = params ->
-        :ok =
-          HashCracker.recieve_results(params.request_id, params.words_answers, params.part_number)
-
-        resp_body = View.ok_worker_xml_response(params.request_id)
-        send_xml(conn, resp_body, 200)
-
+    with %{} = params <- Parser.parse_worker_response(xml_body),
+         :ok <-
+           HashCracker.recieve_results(
+             params.request_id,
+             params.words_answers,
+             params.part_number
+           ) do
+      resp_body = View.ok_worker_xml_response(params.request_id)
+      send_xml(conn, resp_body, 200)
+    else
       error ->
         resp_body = View.error_worker_xml_response(error)
         send_xml(conn, resp_body, 400)

@@ -5,6 +5,8 @@ defmodule CrackHashManager.Application do
 
   use Application
 
+  alias CrackHashManager.Clients.Workers.Real
+
   @doc false
   @impl true
   def start(_type, _args) do
@@ -13,6 +15,8 @@ defmodule CrackHashManager.Application do
        plug: CrackHashManagerWeb.Endpoint,
        scheme: :http,
        options: [port: CrackHashManager.fetch_env!(:endpoint, :port)]},
+      {Finch, name: CrackHashManager.FinchHTTP},
+      {Real.RoundRobin, Real.workers_endpoints()},
       {Task.Supervisor, name: CrackHashManager.WorkersSupervisor},
       {DynamicSupervisor, strategy: :one_for_one, name: CrackHashManager.JobsStorageSupervisor},
       {Registry, keys: :unique, name: CrackHashManager.JobsStorageRegistry}

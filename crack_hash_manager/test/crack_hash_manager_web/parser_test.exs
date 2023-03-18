@@ -50,7 +50,7 @@ defmodule CrackHashManagerWeb.ParserTest do
 
   test "Парсинг запроса от пользователя на получение статуса" do
     request_id = "ec8a4d9a-bfc4-11ed-b9a2-acde48001122"
-    request_body = %{"request_id" => request_id}
+    request_body = %{"requestId" => request_id}
     assert %{request_id: request_id} == Parser.parse_user_status_request(request_body)
   end
 

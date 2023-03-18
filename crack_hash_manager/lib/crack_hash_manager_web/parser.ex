@@ -25,7 +25,7 @@ defmodule CrackHashManagerWeb.Parser do
   @spec parse_user_status_request(map()) :: %{request_id: String.t()} | {:error, :bad_params}
   def parse_user_status_request(query_params)
 
-  def parse_user_status_request(%{"request_id" => request_id}) when is_binary(request_id) do
+  def parse_user_status_request(%{"requestId" => request_id}) when is_binary(request_id) do
     %{request_id: request_id}
   end
 
@@ -48,15 +48,14 @@ defmodule CrackHashManagerWeb.Parser do
             "RequestId" => request_id
           }
         }
-      }
-      when is_list(words_answers) ->
+      } ->
         %{
-          words_answers: words_answers,
+          words_answers: List.wrap(words_answers),
           part_number: String.to_integer(part_number),
           request_id: request_id
         }
 
-      _ ->
+      _e ->
         {:error, :bad_params}
     end
   end

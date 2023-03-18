@@ -4,12 +4,10 @@ defmodule CrackHashManager.HashCracker do
   """
   alias CrackHashManager.Clients.Workers, as: WorkersClient
   alias CrackHashManager.JobsStorage
-  alias CrackHashManager.Math
 
   require Logger
 
   @alphabet ?a..?z |> Enum.map(&to_string([&1])) |> Enum.concat(0..9) |> Enum.join()
-  @alphabet_length String.length(@alphabet)
 
   @doc """
   Начинает выполнение распределенной задачи по взлому хэша. Возвращает `request_id`, по которому потом можно будет получить результат
@@ -80,9 +78,6 @@ defmodule CrackHashManager.HashCracker do
       CrackHashManager.WorkersSupervisor,
       1..workers_count,
       fn part_number ->
-        total_combinations_count = Math.total_combinations(max_length, @alphabet_length)
-        part_count = Math.part_count(part_number, workers_count, total_combinations_count)
-
         Logger.info("Sending request for #{request_id} part_number #{part_number}...")
 
         WorkersClient.send(%WorkersClient.DTO{
@@ -90,10 +85,11 @@ defmodule CrackHashManager.HashCracker do
           alphabet: @alphabet,
           hash: hash,
           max_length: max_length,
-          part_count: part_count,
+          part_count: workers_count,
           part_number: part_number
         })
       end,
+      ordered: false,
       # В случае ошибки для конкретного part_number будет перезапускать 3 раза в течении 5 секунд (дефолт)
       restart: :transient
     )

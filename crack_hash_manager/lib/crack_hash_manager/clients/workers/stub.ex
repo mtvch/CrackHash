@@ -8,9 +8,11 @@ defmodule CrackHashManager.Clients.Workers.Stub do
 
   @behaviour WorkersClient
 
+  @impl true
   @doc false
   def workers_count, do: 2
 
+  @impl true
   @doc false
   def send(%DTO{}), do: :ok
 end

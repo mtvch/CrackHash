@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  manager:
+    container_name: 'crack_hash_manager'
+    hostname: 'manager'
+    environment:
+      - WORKERS_ENDPOINTS=http://worker:4001
+    build: ./crack_hash_manager
+    networks:
+    - crack-hash-network
+    ports:
+      - 4000:4000
+
+  worker:
+    container_name: 'crack_hash_worker'
+    hostname: 'worker'
+    environment:
+      - MANAGER_ENDPOINT=http://manager:4000
+    build: ./crack_hash_worker
+    networks:
+    - crack-hash-network
+    ports:
+      - 4001:4001
+
+networks:
+  crack-hash-network:
+    driver: bridge
