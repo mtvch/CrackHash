@@ -24,7 +24,7 @@ defmodule CrackHashManager.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :elixir_xml_to_map],
+      extra_applications: [:logger, :elixir_xml_to_map, :amqp],
       mod: {CrackHashManager.Application, []}
     ]
   end
@@ -32,6 +32,11 @@ defmodule CrackHashManager.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # RabbitMQ
+      {:amqp, "~> 3.2.0"},
+      # RabbitMQ consumer
+      {:broadway, "~> 1.0.6"},
+      {:broadway_rabbitmq, "~> 0.7.2"},
       # Web server
       {:bandit, ">= 0.7.1"},
       # Static code consistency analysis
@@ -50,8 +55,11 @@ defmodule CrackHashManager.MixProject do
       {:finch, "~> 0.15"},
       # Mocking in tests
       {:mock, "~> 0.3.0", only: :test},
+      # MongoDB Driver
+      {:mongodb, "~> 1.0"},
       # Json encode/decode
       {:poison, "~> 5.0"},
+      {:quantum, "~> 3.5"},
       # UUID generation
       {:uuid, "~> 1.1"}
     ]

@@ -16,7 +16,14 @@ defmodule CrackHashWorker.Clients.Manager do
           }
   end
 
+  @callback init() :: :ok
   @callback send_result(DTO.t()) :: :ok
+
+  @doc """
+  Выполняет инициализацию клиента. Вызывается на старте приложения
+  """
+  @spec init() :: :ok
+  def init, do: client().init()
 
   @doc """
   Отправляет ответ с результатом работы воркера менеджеру

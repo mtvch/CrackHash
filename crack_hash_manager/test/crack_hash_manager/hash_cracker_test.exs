@@ -7,6 +7,10 @@ defmodule CrackHashManager.HashCrackerTest do
   alias CrackHashManager.Clients.Workers.DTO
   alias CrackHashManager.HashCracker
 
+  setup do
+    Mongo.command(:mongo, %{dropDatabase: 1})
+  end
+
   test "Работа менеджера: клиент-затычка" do
     hash = "123"
     max_length = 5
@@ -15,7 +19,7 @@ defmodule CrackHashManager.HashCrackerTest do
     assert :ok == HashCracker.recieve_results(request_id, ["WORD_1", "WORD_2"], 1)
     assert :in_progress == HashCracker.get_results(request_id)
     assert :ok == HashCracker.recieve_results(request_id, ["WORD_2", "WORD_3"], 2)
-    assert {:ok, ["WORD_2", "WORD_3", "WORD_1"]} == HashCracker.get_results(request_id)
+    assert {:ok, ["WORD_1", "WORD_2", "WORD_3"]} == HashCracker.get_results(request_id)
     assert {:error, :not_found} == HashCracker.get_results("bad_request_id")
   end
 

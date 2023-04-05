@@ -19,8 +19,15 @@ defmodule CrackHashManager.Clients.Workers do
           }
   end
 
+  @callback init() :: :ok
   @callback workers_count() :: integer()
   @callback send(DTO.t()) :: :ok
+
+  @doc """
+  Выполняет инициализацию клиента. Вызывается на старте приложения
+  """
+  @spec init() :: :ok
+  def init, do: client().init()
 
   @doc """
   Возвращает число воркеров

@@ -4,6 +4,7 @@ defmodule CrackHashWorker.Application do
   @moduledoc false
 
   use Application
+  alias CrackHashWorker.Clients.Manager, as: ManagerClient
 
   @impl true
   def start(_type, _args) do
@@ -13,12 +14,15 @@ defmodule CrackHashWorker.Application do
        scheme: :http,
        options: [port: CrackHashWorker.fetch_env!(:endpoint, :port)]},
       {Finch, name: CrackHashWorker.FinchHTTP},
+      CrackHashWorkerWeb.RMQEndpoint,
       {Task.Supervisor, name: CrackHashWorker.WorkerSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: CrackHashWorker.Supervisor]
-    Supervisor.start_link(children, opts)
+    res = Supervisor.start_link(children, opts)
+    ManagerClient.init()
+    res
   end
 end

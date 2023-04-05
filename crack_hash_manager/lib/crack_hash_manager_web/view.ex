@@ -4,8 +4,7 @@ defmodule CrackHashManagerWeb.View do
   """
   @error_codes_to_messages %{
     bad_params: "Bad params",
-    not_found: "Not found",
-    part_number_not_found: "Not waiting for results from part number"
+    not_found: "Not found"
   }
 
   @dir "lib/crack_hash_manager_web/view"

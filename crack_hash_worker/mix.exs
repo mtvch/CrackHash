@@ -32,6 +32,11 @@ defmodule CrackHashWorker.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # RabbitMQ
+      {:amqp, "~> 3.2.0"},
+      # RabbitMQ consumer
+      {:broadway, "~> 1.0.6"},
+      {:broadway_rabbitmq, "~> 0.7.2"},
       # Web server
       {:bandit, ">= 0.7.1"},
       # Static code consistency analysis

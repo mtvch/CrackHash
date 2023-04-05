@@ -4,6 +4,7 @@ defmodule CrackHashManager.HashCracker do
   """
   alias CrackHashManager.Clients.Workers, as: WorkersClient
   alias CrackHashManager.JobsStorage
+  alias CrackHashManager.Sender
 
   require Logger
 
@@ -17,8 +18,6 @@ defmodule CrackHashManager.HashCracker do
     request_id = UUID.uuid1()
     workers_count = WorkersClient.workers_count()
     Logger.info("Adding request #{request_id} to storage with workers count #{workers_count}")
-    parts_to_wait = 1..workers_count |> Enum.to_list()
-    :ok = JobsStorage.add_request_id(request_id, parts_to_wait)
     start_workers(request_id, hash, max_length, workers_count)
     request_id
   end
@@ -39,10 +38,6 @@ defmodule CrackHashManager.HashCracker do
       {:error, :not_found} ->
         Logger.warn("Request #{request_id} was not found in storage")
         {:error, :not_found}
-
-      {:error, :part_number_not_found} ->
-        Logger.warn("Request #{request_id}: part_number #{part_number} was not found")
-        {:error, :part_number_not_found}
     end
   end
 
@@ -53,14 +48,15 @@ defmodule CrackHashManager.HashCracker do
   def get_results(request_id) do
     Logger.info("Retrieving results for #{request_id}...")
 
-    case JobsStorage.get_results(request_id) do
-      # Возможно, стоит удалять результаты из хранилища после получения, чтобы оно не разрасталось до бесконечности
-      # И по таймеру чистить. Но это уже оптимизации
-      {results, [] = _parts_to_wait} ->
+    request_id
+    |> JobsStorage.get_jobs()
+    |> retrieve_results_from_jobs()
+    |> case do
+      {:ok, results} ->
         Logger.info("Returning resuls for #{request_id}: #{inspect(results)}")
         {:ok, results}
 
-      {_results, parts_to_wait} when is_list(parts_to_wait) ->
+      {:in_progress, parts_to_wait} ->
         Logger.info(
           "Request #{request_id} is in progress: waiting for parts #{inspect(parts_to_wait)}"
         )
@@ -74,25 +70,33 @@ defmodule CrackHashManager.HashCracker do
   end
 
   defp start_workers(request_id, hash, max_length, workers_count) do
-    Task.Supervisor.async_stream(
-      CrackHashManager.WorkersSupervisor,
-      1..workers_count,
-      fn part_number ->
-        Logger.info("Sending request for #{request_id} part_number #{part_number}...")
+    1..workers_count
+    |> Enum.map(fn part_number ->
+      %WorkersClient.DTO{
+        request_id: request_id,
+        alphabet: @alphabet,
+        hash: hash,
+        max_length: max_length,
+        part_count: workers_count,
+        part_number: part_number
+      }
+    end)
+    |> Sender.send()
+  end
 
-        WorkersClient.send(%WorkersClient.DTO{
-          request_id: request_id,
-          alphabet: @alphabet,
-          hash: hash,
-          max_length: max_length,
-          part_count: workers_count,
-          part_number: part_number
-        })
-      end,
-      ordered: false,
-      # В случае ошибки для конкретного part_number будет перезапускать 3 раза в течении 5 секунд (дефолт)
-      restart: :transient
-    )
-    |> Stream.run()
+  defp retrieve_results_from_jobs([] = _jobs), do: {:error, :not_found}
+
+  defp retrieve_results_from_jobs(jobs) when is_list(jobs) do
+    jobs
+    |> Enum.reject(&is_list(&1.results))
+    |> case do
+      [] ->
+        results = jobs |> Enum.flat_map(& &1.results) |> Enum.uniq() |> Enum.sort()
+        {:ok, results}
+
+      not_finished_jobs ->
+        parts_to_wait = Enum.map(not_finished_jobs, & &1.part_number) |> Enum.sort()
+        {:in_progress, parts_to_wait}
+    end
   end
 end

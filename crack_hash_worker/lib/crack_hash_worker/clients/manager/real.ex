@@ -17,6 +17,10 @@ defmodule CrackHashWorker.Clients.Manager.Real do
 
   @impl true
   @doc false
+  def init, do: :ok
+
+  @impl true
+  @doc false
   def send_result(%DTO{} = dto) do
     xml_body =
       EEx.eval_string(@request_template,

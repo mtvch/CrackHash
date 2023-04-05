@@ -43,14 +43,14 @@ defmodule CrackHashManagerWeb.Parser do
       %{
         "CrackHashWorkerResponse" => %{
           "#content" => %{
-            "Answers" => %{"words" => words_answers},
+            "Answers" => answers,
             "PartNumber" => part_number,
             "RequestId" => request_id
           }
         }
       } ->
         %{
-          words_answers: List.wrap(words_answers),
+          words_answers: List.wrap(answers["words"]),
           part_number: String.to_integer(part_number),
           request_id: request_id
         }

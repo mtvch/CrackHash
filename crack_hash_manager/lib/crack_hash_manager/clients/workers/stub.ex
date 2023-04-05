@@ -10,6 +10,10 @@ defmodule CrackHashManager.Clients.Workers.Stub do
 
   @impl true
   @doc false
+  def init, do: :ok
+
+  @impl true
+  @doc false
   def workers_count, do: 2
 
   @impl true

@@ -1,6 +1,6 @@
 defmodule CrackHashManager.Clients.Workers.Real do
   @moduledoc """
-  Клиент, который отправляет ответ воркера менеджеру и используется в проде
+  Клиент, который отправляет ответ запрос воркеру на взлом хэша и использует HTTP
   """
   require Logger
 
@@ -32,6 +32,13 @@ defmodule CrackHashManager.Clients.Workers.Real do
 
   @impl true
   @doc false
+  def init do
+    {:ok, _pid} = RoundRobin.start_link(workers_endpoints())
+    :ok
+  end
+
+  @impl true
+  @doc false
   def send(%DTO{} = dto) do
     xml_body =
       EEx.eval_string(@request_template,
@@ -51,8 +58,13 @@ defmodule CrackHashManager.Clients.Workers.Real do
     Finch.build(:post, manager_url, [{"content_type", "text/xml"}], xml_body)
     |> Finch.request(FinchHTTP)
     |> case do
-      {:ok, _} -> :ok
-      error -> error
+      {:ok, _} ->
+        Logger.info("Запрос отправлен успешно")
+        :ok
+
+      error ->
+        Logger.error("Ошибка при отправлении запроса: #{inspect(error)}")
+        error
     end
   end
 
@@ -60,5 +72,5 @@ defmodule CrackHashManager.Clients.Workers.Real do
   @doc false
   def workers_count, do: workers_endpoints() |> length()
 
-  def workers_endpoints, do: CrackHashManager.fetch_env!(__MODULE__, :workers_endpoints)
+  defp workers_endpoints, do: CrackHashManager.fetch_env!(__MODULE__, :workers_endpoints)
 end

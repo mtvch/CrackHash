@@ -16,6 +16,10 @@ defmodule CrackHashManagerWeb.EndpointTest do
 
   @request_id "ec8a4d9a-bfc4-11ed-b9a2-acde48001122"
 
+  setup do
+    Mongo.command(:mongo, %{dropDatabase: 1})
+  end
+
   test_with_mock "Полный цикл взлома хэша", UUID, uuid1: fn -> @request_id end do
     conn =
       :post
@@ -57,7 +61,7 @@ defmodule CrackHashManagerWeb.EndpointTest do
     assert conn.status == 200
 
     assert conn.resp_body ==
-             "{\"status\":\"READY\",\"ok\":true,\"data\":[\"WORD_2\",\"WORD_3\",\"WORD_1\"]}"
+             "{\"status\":\"READY\",\"ok\":true,\"data\":[\"WORD_1\",\"WORD_2\",\"WORD_3\"]}"
   end
 
   test "Отправка заявки на взлом хэша: не указали content-type" do

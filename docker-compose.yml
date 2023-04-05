@@ -2,26 +2,97 @@ version: "3.7"
 
 services:
   manager:
-    container_name: 'crack_hash_manager'
-    hostname: 'manager'
+    container_name: crack_hash_manager
+    hostname: manager
     environment:
-      - WORKERS_ENDPOINTS=http://worker:4001
+      - RMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - MONGO_SEEDS=mongo1:27017,mongo2:27017,mongo3:27017
+      - WORKERS_COUNT=2
     build: ./crack_hash_manager
     networks:
-    - crack-hash-network
+      - crack-hash-network
     ports:
       - 4000:4000
+    depends_on:
+      - mongo3
+      - rabbitmq
 
-  worker:
-    container_name: 'crack_hash_worker'
-    hostname: 'worker'
+  worker1:
+    container_name: worker1
+    hostname: worker1
     environment:
-      - MANAGER_ENDPOINT=http://manager:4000
+      - PORT=4001
+      - RMQ_URL=amqp://guest:guest@rabbitmq:5672
     build: ./crack_hash_worker
     networks:
-    - crack-hash-network
+      - crack-hash-network
     ports:
       - 4001:4001
+    depends_on:
+      - mongo3
+      - rabbitmq
+
+  worker2:
+    container_name: worker2
+    hostname: worker2
+    environment:
+      - PORT=4002
+      - RMQ_URL=amqp://guest:guest@rabbitmq:5672
+    build: ./crack_hash_worker
+    networks:
+      - crack-hash-network
+    ports:
+      - 4002:4002
+    depends_on:
+      - mongo3
+      - rabbitmq
+
+  mongo1:
+    image: mongo:5
+    container_name: mongo1
+    volumes:
+      - ./data/mongo1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    ports:
+      - 30001:27017
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "crackHash"]
+    networks:
+      - crack-hash-network
+
+  mongo2:
+    image: mongo:5
+    container_name: mongo2
+    volumes:
+      - ./data/mongo2:/data/db
+    ports:
+      - 30002:27017
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "crackHash"]
+    networks:
+      - crack-hash-network
+    depends_on:
+      - mongo1
+
+  mongo3:
+    image: mongo:5
+    container_name: mongo3
+    volumes:
+      - ./data/mongo3:/data/db
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "crackHash"]
+    ports:
+      - 30003:27017
+    networks:
+      - crack-hash-network
+    depends_on:
+      - mongo2
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    networks:
+        - crack-hash-network
 
 networks:
   crack-hash-network:

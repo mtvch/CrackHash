@@ -10,7 +10,7 @@ config :crack_hash_manager, CrackHashManager.Clients.Workers.Real,
 
 config :logger, :console,
   level: :info,
-  format: "[$level] $message [$metadata]\n",
+  format: "[$level] $time $message [$metadata]\n",
   metadata: [:pid, :file, :line]
 
 # Import environment specific config. This must remain at the bottom

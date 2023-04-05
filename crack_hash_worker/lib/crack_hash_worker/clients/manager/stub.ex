@@ -10,5 +10,9 @@ defmodule CrackHashWorker.Clients.Manager.Stub do
 
   @impl true
   @doc false
+  def init, do: :ok
+
+  @impl true
+  @doc false
   def send_result(%DTO{}), do: :ok
 end

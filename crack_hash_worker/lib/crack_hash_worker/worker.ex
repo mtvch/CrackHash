@@ -33,20 +33,24 @@ defmodule CrackHashWorker.Worker do
 
     Task.Supervisor.start_child(
       WorkerSupervisor,
-      fn ->
-        answers = crack_hash(dto)
-
-        :ok =
-          ManagerClient.send_result(%ManagerClient.DTO{
-            request_id: dto.request_id,
-            part_number: dto.part_number,
-            answers: answers
-          })
-      end,
+      fn -> crack_hash_and_send_results(dto) end,
       restart: :transient
     )
 
     :ok
+  end
+
+  def crack_hash_and_send_results(%DTO{} = dto) do
+    Logger.info("Начинаю взлом хэша: #{inspect(dto)}")
+    answers = crack_hash(dto)
+    Process.sleep(10_000)
+
+    :ok =
+      ManagerClient.send_result(%ManagerClient.DTO{
+        request_id: dto.request_id,
+        part_number: dto.part_number,
+        answers: answers
+      })
   end
 
   @doc false
